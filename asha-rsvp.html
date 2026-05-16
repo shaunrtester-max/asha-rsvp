@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asha's 7th Birthday 🦄</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    background: #fdf4ff;
+    background-image:
+      radial-gradient(ellipse at 15% 10%, #f5d0fe 0%, transparent 45%),
+      radial-gradient(ellipse at 85% 80%, #fce7f3 0%, transparent 45%),
+      radial-gradient(ellipse at 55% 35%, #ede9fe 0%, transparent 40%);
+    font-family: 'DM Sans', sans-serif;
+    padding-bottom: 48px;
+  }
+
+  .header {
+    background: linear-gradient(150deg, #a21caf 0%, #7c3aed 50%, #be185d 100%);
+    padding: 30px 20px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 6px 28px rgba(162,28,175,0.35);
+  }
+
+  .header-sparkle {
+    position: absolute;
+    color: rgba(255,255,255,0.4);
+    pointer-events: none;
+  }
+
+  .header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px;
+    font-weight: 600;
+    font-style: italic;
+    color: white;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    margin: 8px 0 4px;
+  }
+
+  .header p {
+    color: rgba(255,255,255,0.82);
+    font-size: 13px;
+    letter-spacing: 0.3px;
+  }
+
+  .save-status {
+    margin-top: 8px;
+    height: 20px;
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    transition: color 0.3s;
+  }
+
+  .content { padding: 18px 14px 0; }
+
+  .summary {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .summary-card {
+    flex: 1;
+    background: white;
+    border-radius: 14px;
+    padding: 10px 6px;
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(162,28,175,0.09);
+    border-top: 3px solid;
+  }
+
+  .summary-card .emoji { font-size: 18px; }
+  .summary-card .count { font-size: 24px; font-weight: 700; line-height: 1.1; }
+  .summary-card .label { font-size: 10px; color: #9ca3af; margin-top: 2px; }
+
+  .guest-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+
+  .guest-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 14px rgba(162,28,175,0.07);
+    border: 1.5px solid;
+  }
+
+  .guest-main { padding: 12px 13px; }
+
+  .guest-name-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 9px;
+  }
+
+  .guest-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-style: italic;
+    color: #3b0764;
+    font-size: 18px;
+  }
+
+  .edit-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 0 4px;
+    margin-left: 6px;
+  }
+
+  .status-pill {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .action-row { display: flex; gap: 5px; }
+
+  .action-btn {
+    flex: 1;
+    padding: 7px 3px;
+    border-radius: 9px;
+    border: 2px solid #f0f0f0;
+    background: #fafafa;
+    color: #d1d5db;
+    font-size: 11px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .action-btn.active-coming    { border-color: #15803d; background: #dcfce7; color: #15803d; }
+  .action-btn.active-notcoming { border-color: #b91c1c; background: #fee2e2; color: #b91c1c; }
+  .action-btn.active-pending   { border-color: #b45309; background: #fef9c3; color: #b45309; }
+
+  .icon-btn {
+    padding: 7px 9px;
+    border-radius: 9px;
+    border: 2px solid #f0f0f0;
+    background: #fafafa;
+    cursor: pointer;
+    font-size: 15px;
+  }
+
+  .expand-btn { color: #d946ef; }
+  .delete-btn { color: #fca5a5; }
+
+  .guest-expanded {
+    border-top: 1px solid #f5d0fe;
+    padding: 12px 13px;
+    background: #fdf4ff;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .field-label {
+    font-size: 11px;
+    color: #a855f7;
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+
+  .field-input {
+    width: 100%;
+    border: 1.5px solid #e9d5ff;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    color: #581c87;
+    background: white;
+    outline: none;
+  }
+
+  .save-details-btn {
+    margin-top: 4px;
+    padding: 9px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, #a21caf, #7c3aed);
+    color: white;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    width: 100%;
+  }
+
+  .edit-row { display: flex; gap: 6px; flex: 1; margin-right: 8px; }
+
+  .edit-input {
+    flex: 1;
+    border: 2px solid #a21caf;
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-size: 15px;
+    font-family: 'Cormorant Garamond', serif;
+    color: #581c87;
+    outline: none;
+  }
+
+  .confirm-btn {
+    background: #a21caf;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 5px 11px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  .cancel-btn {
+    background: #f3f4f6;
+    color: #9ca3af;
+    border: none;
+    border-radius: 8px;
+    padding: 5px 11px;
+    cursor: pointer;
+  }
+
+  .add-row {
+    background: white;
+    border-radius: 16px;
+    padding: 13px;
+    box-shadow: 0 2px 14px rgba(162,28,175,0.08);
+    border: 1.5px solid #f0abfc;
+    display: flex;
+    gap: 8px;
+  }
+
+  .add-input {
+    flex: 1;
+    border: 2px solid #e9d5ff;
+    border-radius: 10px;
+    padding: 9px 12px;
+    font-size: 15px;
+    font-family: 'Cormorant Garamond', serif;
+    color: #3b0764;
+    outline: none;
+    background: #fdf4ff;
+  }
+
+  .add-btn {
+    background: linear-gradient(135deg, #a21caf, #7c3aed);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 9px 18px;
+    font-size: 22px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(162,28,175,0.3);
+  }
+
+  .footer-note {
+    text-align: center;
+    color: #d8b4fe;
+    font-size: 11px;
+    margin-top: 14px;
+  }
+
+  .loader {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    font-family: 'Cormorant Garamond', serif;
+    color: #9333ea;
+    font-size: 20px;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div class="loader">
+    <div style="font-size:52px">🦄</div>
+    <div>Loading Asha's party...</div>
+  </div>
+</div>
+
+<script>
+const BIN_ID = "6a07fe0badc21f119aa9c902";
+const API_KEY = "$2a$10$k1K1ao5S5WEZPOD2d8Xpee53jXyzzC2nbPo./2fxLcenniaRW.0aa";
+const BASE_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+
+const DEFAULT_GUESTS = [
+  { id: 1, name: "Antony", status: "coming", kids: "", dietary: "", notes: "" },
+  { id: 2, name: "Garth and Sue", status: "coming", kids: "", dietary: "", notes: "" },
+  { id: 3, name: "Mell", status: "coming", kids: "", dietary: "", notes: "" },
+  { id: 4, name: "Nana", status: "coming", kids: "", dietary: "", notes: "" },
+  { id: 5, name: "Brenton and Stacey", status: "pending", kids: "", dietary: "", notes: "" },
+  { id: 6, name: "Cam", status: "pending", kids: "", dietary: "", notes: "" },
+  { id: 7, name: "Hayden", status: "pending", kids: "", dietary: "", notes: "" },
+  { id: 8, name: "Jo", status: "pending", kids: "", dietary: "", notes: "" },
+  { id: 9, name: "Kat", status: "pending", kids: "", dietary: "", notes: "" },
+  { id: 10, name: "Paul", status: "pending", kids: "", dietary: "", notes: "" },
+  { id: 11, name: "Reuben", status: "pending", kids: "", dietary: "", notes: "" },
+];
+
+const STATUS = {
+  coming:    { label: "✓ Coming",        border: "#86efac", pill_bg: "#dcfce7", pill_color: "#15803d" },
+  notcoming: { label: "✗ Can't Make It", border: "#fca5a5", pill_bg: "#fee2e2", pill_color: "#b91c1c" },
+  pending:   { label: "⏳ No Reply",      border: "#fcd34d", pill_bg: "#fef9c3", pill_color: "#b45309" },
+};
+
+const STATUS_ORDER = { coming: 0, pending: 1, notcoming: 2 };
+
+let guests = [];
+let nextId = 20;
+let expandedId = null;
+let editingId = null;
+let saveTimer = null;
+let saveState = "idle";
+
+async function loadGuests() {
+  try {
+    const res = await fetch(BASE_URL + "/latest", {
+      headers: { "X-Master-Key": API_KEY }
+    });
+    const data = await res.json();
+    if (data.record?.guests?.length > 0) {
+      guests = data.record.guests;
+      nextId = Math.max(...guests.map(g => g.id)) + 1;
+    } else {
+      guests = DEFAULT_GUESTS;
+      await saveGuests();
+    }
+  } catch(e) {
+    guests = DEFAULT_GUESTS;
+  }
+  render();
+}
+
+async function saveGuests() {
+  setSaveState("saving");
+  try {
+    const res = await fetch(BASE_URL, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", "X-Master-Key": API_KEY },
+      body: JSON.stringify({ guests })
+    });
+    setSaveState(res.ok ? "saved" : "error");
+    if (res.ok) setTimeout(() => { setSaveState("idle"); render(); }, 2500);
+  } catch(e) {
+    setSaveState("error");
+  }
+  render();
+}
+
+function scheduleSave() {
+  if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveGuests, 700);
+}
+
+function setSaveState(s) { saveState = s; }
+
+function sorted() {
+  return [...guests].sort((a,b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status]);
+}
+
+function setStatus(id, status) {
+  guests = guests.map(g => g.id === id ? {...g, status} : g);
+  render();
+  scheduleSave();
+}
+
+function removeGuest(id) {
+  if (!confirm("Remove this guest?")) return;
+  guests = guests.filter(g => g.id !== id);
+  render();
+  scheduleSave();
+}
+
+function startEdit(id, name) {
+  editingId = id;
+  render();
+  const input = document.getElementById("edit-input-" + id);
+  if (input) { input.value = name; input.focus(); }
+}
+
+function confirmEdit(id) {
+  const input = document.getElementById("edit-input-" + id);
+  const val = input?.value?.trim();
+  if (val) guests = guests.map(g => g.id === id ? {...g, name: val} : g);
+  editingId = null;
+  render();
+  scheduleSave();
+}
+
+function cancelEdit() { editingId = null; render(); }
+
+function toggleExpand(id) {
+  expandedId = expandedId === id ? null : id;
+  render();
+}
+
+function saveDetails(id) {
+  const kids = document.getElementById("kids-" + id)?.value || "";
+  const dietary = document.getElementById("dietary-" + id)?.value || "";
+  const notes = document.getElementById("notes-" + id)?.value || "";
+  guests = guests.map(g => g.id === id ? {...g, kids, dietary, notes} : g);
+  scheduleSave();
+  const btn = document.getElementById("save-btn-" + id);
+  if (btn) { btn.textContent = "✅ Saved!"; setTimeout(() => { if(btn) btn.textContent = "💾 Save Details"; }, 2000); }
+}
+
+function addGuest() {
+  const input = document.getElementById("new-guest-input");
+  const name = input?.value?.trim();
+  if (!name) return;
+  guests.push({ id: nextId++, name, status: "pending", kids: "", dietary: "", notes: "" });
+  input.value = "";
+  render();
+  scheduleSave();
+}
+
+function render() {
+  const s = sorted();
+  const coming = guests.filter(g => g.status === "coming").length;
+  const notComing = guests.filter(g => g.status === "notcoming").length;
+  const pending = guests.filter(g => g.status === "pending").length;
+
+  const saveBadge = {
+    saving: `<span style="color:rgba(255,255,255,0.75)">💾 Saving...</span>`,
+    saved:  `<span style="color:#86efac">✅ Saved!</span>`,
+    error:  `<span style="color:#fca5a5">❌ Save failed — check connection</span>`,
+    idle:   `<span style="color:transparent">·</span>`,
+  }[saveState];
+
+  const html = `
+    <div class="header">
+      <span class="header-sparkle" style="font-size:16px;top:10px;left:10%">✦</span>
+      <span class="header-sparkle" style="font-size:22px;top:18px;left:25%">✧</span>
+      <span class="header-sparkle" style="font-size:14px;top:8px;left:50%">✦</span>
+      <span class="header-sparkle" style="font-size:20px;top:24px;left:70%">✧</span>
+      <span class="header-sparkle" style="font-size:12px;top:14px;left:88%">✦</span>
+      <div style="font-size:42px;margin-bottom:6px">🦄👑✨</div>
+      <h1>Asha's 7th Birthday</h1>
+      <p>Saturday 23rd May · 2:00 PM · 33 Appaloosa Close</p>
+      <div class="save-status">${saveBadge}</div>
+    </div>
+
+    <div class="content">
+      <div class="summary">
+        <div class="summary-card" style="border-color:#86efac">
+          <div class="emoji">🎉</div>
+          <div class="count" style="color:#15803d">${coming}</div>
+          <div class="label">Coming</div>
+        </div>
+        <div class="summary-card" style="border-color:#fca5a5">
+          <div class="emoji">😢</div>
+          <div class="count" style="color:#b91c1c">${notComing}</div>
+          <div class="label">Can't Make It</div>
+        </div>
+        <div class="summary-card" style="border-color:#fcd34d">
+          <div class="emoji">💌</div>
+          <div class="count" style="color:#b45309">${pending}</div>
+          <div class="label">No Reply</div>
+        </div>
+      </div>
+
+      <div class="guest-list">
+        ${s.map(g => {
+          const st = STATUS[g.status];
+          const isExpanded = expandedId === g.id;
+          const isEditing = editingId === g.id;
+          return `
+            <div class="guest-card" style="border-color:${st.border}">
+              <div class="guest-main">
+                <div class="guest-name-row">
+                  ${isEditing ? `
+                    <div class="edit-row">
+                      <input id="edit-input-${g.id}" class="edit-input" value="${g.name}"
+                        onkeydown="if(event.key==='Enter')confirmEdit(${g.id});if(event.key==='Escape')cancelEdit()">
+                      <button class="confirm-btn" onclick="confirmEdit(${g.id})">✓</button>
+                      <button class="cancel-btn" onclick="cancelEdit()">✕</button>
+                    </div>
+                  ` : `
+                    <div style="display:flex;align-items:center">
+                      <span class="guest-name">${g.name}</span>
+                      <button class="edit-btn" onclick="startEdit(${g.id},'${g.name.replace(/'/g,"\\'")}')">✏️</button>
+                    </div>
+                  `}
+                  <span class="status-pill" style="background:${st.pill_bg};color:${st.pill_color}">${st.label}</span>
+                </div>
+                <div class="action-row">
+                  <button class="action-btn ${g.status==='coming'?'active-coming':''}" onclick="setStatus(${g.id},'coming')">✓ Coming</button>
+                  <button class="action-btn ${g.status==='notcoming'?'active-notcoming':''}" onclick="setStatus(${g.id},'notcoming')">✗ Can't</button>
+                  <button class="action-btn ${g.status==='pending'?'active-pending':''}" onclick="setStatus(${g.id},'pending')">⏳ No Reply</button>
+                  <button class="icon-btn expand-btn" onclick="toggleExpand(${g.id})">⋯</button>
+                  <button class="icon-btn delete-btn" onclick="removeGuest(${g.id})">🗑</button>
+                </div>
+              </div>
+              ${isExpanded ? `
+                <div class="guest-expanded">
+                  <div>
+                    <div class="field-label">Kids attending</div>
+                    <input id="kids-${g.id}" class="field-input" value="${g.kids}" placeholder="e.g. 2">
+                  </div>
+                  <div>
+                    <div class="field-label">Dietary needs</div>
+                    <input id="dietary-${g.id}" class="field-input" value="${g.dietary}" placeholder="e.g. Gluten free">
+                  </div>
+                  <div>
+                    <div class="field-label">Notes</div>
+                    <input id="notes-${g.id}" class="field-input" value="${g.notes}" placeholder="Any extra info...">
+                  </div>
+                  <button id="save-btn-${g.id}" class="save-details-btn" onclick="saveDetails(${g.id})">💾 Save Details</button>
+                </div>
+              ` : ""}
+            </div>
+          `;
+        }).join("")}
+      </div>
+
+      <div class="add-row">
+        <input id="new-guest-input" class="add-input" placeholder="Add a guest..."
+          onkeydown="if(event.key==='Enter')addGuest()">
+        <button class="add-btn" onclick="addGuest()">+</button>
+      </div>
+
+      <p class="footer-note">Tap ⋯ for kids, dietary & notes · Auto-saves to cloud 💜</p>
+    </div>
+  `;
+
+  document.getElementById("app").innerHTML = html;
+}
+
+loadGuests();
+</script>
+</body>
+</html>

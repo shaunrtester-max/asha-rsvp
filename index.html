@@ -283,6 +283,34 @@
     font-size: 20px;
     font-style: italic;
   }
+
+  .refresh-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(255,255,255,0.18);
+    border: 1.5px solid rgba(255,255,255,0.35);
+    border-radius: 10px;
+    color: white;
+    font-size: 16px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.2s;
+    backdrop-filter: blur(4px);
+    z-index: 10;
+  }
+
+  .refresh-btn:hover {
+    background: rgba(255,255,255,0.28);
+  }
+
+  .refresh-btn:active {
+    transform: rotate(180deg);
+  }
 </style>
 </head>
 <body>
@@ -445,6 +473,7 @@ function render() {
 
   const html = `
     <div class="header">
+      <button class="refresh-btn" onclick="location.reload()" title="Refresh">↻</button>
       <span class="header-sparkle" style="font-size:16px;top:10px;left:10%">✦</span>
       <span class="header-sparkle" style="font-size:22px;top:18px;left:25%">✧</span>
       <span class="header-sparkle" style="font-size:14px;top:8px;left:50%">✦</span>
